@@ -32,6 +32,7 @@ http.createServer((request, response) => {
                 fsFn('./contact.html', response)
                 break
             case "/favicon.ico": 
+            response.setHeader("Content-Type", "image/x-icon; charset=utf-8")
                 fsFn('./favicon.ico', response)
                 break
             default:
