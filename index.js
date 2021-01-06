@@ -4,8 +4,8 @@ let morgan = require("morgan")
 
 let logger = morgan('tiny')
 
-function fsFn(route, response) {
-    fs.readFile(route, (error, content) => {
+function fsFn(path, response) {
+    fs.readFile(path, (error, content) => {
         if(!error) {
             response.write(content)
             response.end()
