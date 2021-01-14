@@ -20,10 +20,42 @@ const fsFn = (url, response) => {
     })
 }
 
+const addUser = (request) => {
+    switch (request.url) {
+        case "/users": 
+            let data = ''
+            // Cuando se estan recibiendo los datos
+            request.on('data', chunk => {
+                data += chunk
+            })
+            // Cuando se terminan de procesar los datos
+            request.on('end', () => {
+                let datos = data.toString()
+                // user.split('&')
+                let user = {
+                    firstName: datos.split("&")[0].split("=")[1],
+                    lastName: datos.split("&")[1].split("=")[1],
+                    email: datos.split("&")[2].split("=")[1],
+                    password: datos.split("&")[3].split("=")[1],
+                }
+                fs.writeFile("db_usuarios.txt", JSON.stringify(user), (error)=> {
+                    if(error) {
+                        console.log(error)
+                    }
+                })
+                console.log(data.toString())
+                console.log("The End")
+            })
+            break
+        default:
+            fsFn(request.url, response)
+    }    
+}
+
 http.createServer((request, response) => {
     logger(request, response, function (err) {
         if(err) return doesNotMatch(err)
-
+        // console.log(request.method)
         if(request.method === "GET") {
             switch (request.url) {
                 case "/": 
@@ -45,18 +77,7 @@ http.createServer((request, response) => {
                     fsFn(request.url, response)
             }    
         } else if(request.method === "POST") {
-            let users = []
-
-            // Cuando se estan recibiendo los datos
-            request.on('users', chunk => {
-                users.push(chunk)
-            })
-
-            // Cuando se terminan de procesar los datos
-            request.on('end', () => {
-                console.log(users.toString)
-                console.log("The End")
-            })
+            addUser(request)
         }
         
     })
